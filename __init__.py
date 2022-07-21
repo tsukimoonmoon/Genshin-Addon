@@ -7,7 +7,7 @@ bl_info = {
     "location": "View3D",
     "description": "This addon was created to ease/automate the shading process for characters.",
     "warning": "This addon is still in development.",
-    "wiki_url": "https://github.com/m4urlclo0",
+    "wiki_url": "https://github.com/m4urlclo0/Genshin-Addon",
     "category": "Object"}
 
 
@@ -97,7 +97,6 @@ class GENSHIN_OT_asingmat(bpy.types.Operator):
             except Exception as e:
                 print("MAKE SURE TO APPEND FILE FIRST\n")
                 raise
-
             # select all empty objects
             bpy.ops.object.select_by_type(type="EMPTY")
             if 'Face Light Direction' in bpy.data.objects:
@@ -177,46 +176,46 @@ class GI_OT_GenshinImportTextures(Operator, ImportHelper):
                     bpy.context.view_layer.objects.active = body_var
                     bpy.context.object.material_slots.get('miHoYo - Genshin Hair').material.node_tree.nodes['Hair_Diffuse_UV0'].image = img
                     bpy.context.object.material_slots.get('miHoYo - Genshin Hair').material.node_tree.nodes['Hair_Diffuse_UV1'].image = img
-                elif "Hair_Lightmap" in file :
+                elif "Hair_Lightmap" in file:
                     bpy.context.view_layer.objects.active = body_var
                     img.colorspace_settings.name='Non-Color'
                     bpy.context.object.material_slots.get('miHoYo - Genshin Hair').material.node_tree.nodes['Hair_Lightmap_UV0'].image = img
                     bpy.context.object.material_slots.get('miHoYo - Genshin Hair').material.node_tree.nodes['Hair_Lightmap_UV1'].image = img
-                elif "Hair_Normalmap" in file :
+                elif "Hair_Normalmap" in file:
                     bpy.context.view_layer.objects.active = body_var
                     img.colorspace_settings.name='Non-Color'
                     bpy.context.object.material_slots.get('miHoYo - Genshin Hair').material.node_tree.nodes['Hair_Normalmap_UV0'].image = img
                     bpy.context.object.material_slots.get('miHoYo - Genshin Hair').material.node_tree.nodes['Hair_Normalmap_UV0'].image = img
-                elif "Hair_Shadow_Ramp" in file :
+                elif "Hair_Shadow_Ramp" in file:
                     bpy.data.node_groups['Hair Shadow Ramp'].nodes['Hair_Shadow_Ramp'].image = img
                 elif "Body_Diffuse" in file :
                     bpy.context.view_layer.objects.active = body_var
                     bpy.context.object.material_slots.get('miHoYo - Genshin Body').material.node_tree.nodes['Body_Diffuse_UV0'].image = img
                     bpy.context.object.material_slots.get('miHoYo - Genshin Body').material.node_tree.nodes['Body_Diffuse_UV1'].image = img
-                elif "Body_Lightmap" in file :
+                elif "Body_Lightmap" in file:
                     bpy.context.view_layer.objects.active = body_var
                     img.colorspace_settings.name='Non-Color'
                     bpy.context.object.material_slots.get('miHoYo - Genshin Body').material.node_tree.nodes['Body_Lightmap_UV0'].image = img
                     bpy.context.object.material_slots.get('miHoYo - Genshin Body').material.node_tree.nodes['Body_Lightmap_UV1'].image = img
-                elif "Body_Normalmap" in file :
+                elif "Body_Normalmap" in file:
                     bpy.context.view_layer.objects.active = body_var
                     img.colorspace_settings.name='Non-Color'
                     bpy.context.object.material_slots.get('miHoYo - Genshin Body').material.node_tree.nodes['Body_Normalmap_UV0'].image = img
                     bpy.context.object.material_slots.get('miHoYo - Genshin Body').material.node_tree.nodes['Body_Normalmap_UV1'].image = img
-                elif "Body_Shadow_Ramp" in file :
+                elif "Body_Shadow_Ramp" in file:
                     bpy.data.node_groups['Body Shadow Ramp'].nodes['Body_Shadow_Ramp'].image = img
-                elif "Face_Diffuse" in file :
+                elif "Face_Diffuse" in file:
                     bpy.context.view_layer.objects.active = body_var
                     bpy.context.object.material_slots.get('miHoYo - Genshin Face').material.node_tree.nodes['Face_Diffuse'].image = img
-                elif "Face_Shadow" in file :
+                elif "Face_Shadow" in file:
                     bpy.context.view_layer.objects.active = body_var
                     img.colorspace_settings.name='Non-Color'
                     bpy.context.object.material_slots.get('miHoYo - Genshin Face').material.node_tree.nodes['Face_Shadow'].image = img
-                elif "FaceLightmap" in file :
+                elif "FaceLightmap" in file:
                     bpy.context.view_layer.objects.active = body_var
                     img.colorspace_settings.name='Non-Color'
                     bpy.data.node_groups['Face Lightmap'].nodes['Face_Lightmap'].image = img
-                elif "MetalMap" in file :
+                elif "MetalMap" in file:
                     bpy.data.node_groups['Metallic Matcap'].nodes['MetalMap'].image = img
                 else:
                     pass
