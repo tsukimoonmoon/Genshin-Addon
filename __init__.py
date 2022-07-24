@@ -1,6 +1,6 @@
 bl_info = {
     "name": "Genshin Addon",
-    "author": "M4urlcl0",
+    "author": "M4urlcl0, Zekium, Modder4869",
     "description": "Easy shading for your Genshin characters",
     "blender": (3, 2, 0),
     "location": "3D View > Sidebar",
