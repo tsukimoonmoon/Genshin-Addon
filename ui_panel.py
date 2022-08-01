@@ -55,8 +55,6 @@ class GI_OT_Assing_Mat(Operator):
                     if matName in material.name:
                         x = material.node_tree.nodes['Principled BSDF'].inputs['Base Color'].links[
                             0].from_node.image.name_full
-                        # split reverse string ]
-                        # print(x)
                         return x.replace('Tex_', "").split('_')[::-1][1]
                     else:
                         pass
@@ -87,9 +85,28 @@ class GI_OT_Assing_Mat(Operator):
                                 materialSlot.material = bpy.data.materials["miHoYo - Genshin Hair"]
                             elif "Dress" in materialSlot.name:  # is it Body or Hair i have no idea
                                 matName = materialSlot.name.split('_')[-1]
-                                materialSlot.material = bpy.data.materials[
-                                    "miHoYo - Genshin " + findDressMaterialName(matName)]
-                else:
+                                dressMaterial = bpy.data.materials[
+                                    "miHoYo - Genshin " + findDressMaterialName(matName)].copy()
+                                dressMaterial.name = "miHoYo - Genshin " + matName
+                                materialSlot.material = bpy.data.materials["miHoYo - Genshin " + matName]
+                                for mat in bpy.data.materials:
+                                    if f"_{findDressMaterialName(matName)}" in mat.name:
+                                        print(mat)
+                                        dressFileImage = \
+                                        mat.node_tree.nodes['Principled BSDF'].inputs['Base Color'].links[
+                                            0].from_node.image
+                                        dressMaterial.node_tree.nodes[
+                                            f'{findDressMaterialName(matName)}_Diffuse_UV0'].image = dressFileImage
+                                        dressMaterial.node_tree.nodes[
+                                            f'{findDressMaterialName(matName)}_Diffuse_UV1'].image = dressFileImage
+                                        dressMaterial.node_tree.nodes[
+                                            f'{findDressMaterialName(matName)}_Lightmap_UV0'].image = dressFileImage
+                                        dressMaterial.node_tree.nodes[
+                                            f'{findDressMaterialName(matName)}_Lightmap_UV1'].image = dressFileImage
+                                        dressMaterial.node_tree.nodes[
+                                            f'{findDressMaterialName(matName)}_Normalmap_UV0'].image = dressFileImage
+                                        dressMaterial.node_tree.nodes[
+                                            f'{findDressMaterialName(matName)}_Normalmap_UV1'].image = dressFileImage
                     pass
             except Exception as e:
                 self.report({'ERROR'}, "Make sure to append file first")
@@ -133,6 +150,7 @@ class GI_OT_Assing_Mat(Operator):
 
 
 # Contributed by Zekium - import textures
+
 class GI_OT_GenshinImportTextures(Operator, ImportHelper):
     """This appears in the tooltip of the operator and in the generated docs"""
     bl_idname = "file.genshin_import"  # important since its how bpy.ops.import_test.some_data is constructed
