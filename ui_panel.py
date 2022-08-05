@@ -35,7 +35,15 @@ class GI_PT_Menu(Panel):
         box.operator("file.genshin_import", text="Import Textures (Linear)",
                      icon="FILEBROWSER").action = "Import_TexLinear"
         # append materials coming soon :(
-        box1.label(text="Additional features, -testing- coming soon", icon="CONSOLE")
+        box1.label(text="Json Data", icon="CONSOLE")
+
+
+def findDressMaterialName(matName):
+    for material in bpy.data.materials:
+        if matName in material.name:
+            x = material.node_tree.nodes['Principled BSDF'].inputs['Base Color'].links[
+                0].from_node.image.name_full
+            return x.replace('Tex_', "").split('_')[::-1][1]
 
 
 # #Contributed by Modder4869 - assing all materials
@@ -50,14 +58,6 @@ class GI_OT_Assing_Mat(Operator):
 
     def execute(self, context):
         if self.action == 'assing_mat':
-            def findDressMaterialName(matName):
-                for material in bpy.data.materials:
-                    if matName in material.name:
-                        x = material.node_tree.nodes['Principled BSDF'].inputs['Base Color'].links[
-                            0].from_node.image.name_full
-                        return x.replace('Tex_', "").split('_')[::-1][1]
-                    else:
-                        pass
             bpy.ops.object.select_all(action='DESELECT')
             # set body to active
             bpy.context.view_layer.objects.active = bpy.data.objects["Body"]
@@ -89,24 +89,6 @@ class GI_OT_Assing_Mat(Operator):
                                     "miHoYo - Genshin " + findDressMaterialName(matName)].copy()
                                 dressMaterial.name = "miHoYo - Genshin " + matName
                                 materialSlot.material = bpy.data.materials["miHoYo - Genshin " + matName]
-                                for mat in bpy.data.materials:
-                                    if f"_{findDressMaterialName(matName)}" in mat.name:
-                                        print(mat)
-                                        dressFileImage = \
-                                        mat.node_tree.nodes['Principled BSDF'].inputs['Base Color'].links[
-                                            0].from_node.image
-                                        dressMaterial.node_tree.nodes[
-                                            f'{findDressMaterialName(matName)}_Diffuse_UV0'].image = dressFileImage
-                                        dressMaterial.node_tree.nodes[
-                                            f'{findDressMaterialName(matName)}_Diffuse_UV1'].image = dressFileImage
-                                        dressMaterial.node_tree.nodes[
-                                            f'{findDressMaterialName(matName)}_Lightmap_UV0'].image = dressFileImage
-                                        dressMaterial.node_tree.nodes[
-                                            f'{findDressMaterialName(matName)}_Lightmap_UV1'].image = dressFileImage
-                                        dressMaterial.node_tree.nodes[
-                                            f'{findDressMaterialName(matName)}_Normalmap_UV0'].image = dressFileImage
-                                        dressMaterial.node_tree.nodes[
-                                            f'{findDressMaterialName(matName)}_Normalmap_UV1'].image = dressFileImage
                     pass
             except Exception as e:
                 self.report({'ERROR'}, "Make sure to append file first")
@@ -150,7 +132,6 @@ class GI_OT_Assing_Mat(Operator):
 
 
 # Contributed by Zekium - import textures
-
 class GI_OT_GenshinImportTextures(Operator, ImportHelper):
     """This appears in the tooltip of the operator and in the generated docs"""
     bl_idname = "file.genshin_import"  # important since its how bpy.ops.import_test.some_data is constructed
@@ -256,12 +237,27 @@ class GI_OT_GenshinImportTextures(Operator, ImportHelper):
                     bpy.data.node_groups['Metallic Matcap'].nodes['MetalMap'].image = img
                 else:
                     pass
+                fixDressTexture()
             return {'FINISHED'}
 
         def execute(self, context):
             if self.action == 'Import_TexLinear':
                 execute()
             return {'FINISHED'}
+
+
+def fixDressTexture():
+    for mat in bpy.data.materials:
+        matName = mat.name.split('_')[-1]
+        if (f'_{matName}' in mat.name) and ('Dress' in mat.name):
+            dressname=findDressMaterialName(matName)
+            dressMaterial = bpy.data.materials["miHoYo - Genshin " + matName]
+            dressMaterial.node_tree.nodes[f'{dressname}_Lightmap_UV0'].image = bpy.data.materials[f'miHoYo - Genshin {dressname}'].node_tree.nodes[f'{dressname}_Lightmap_UV0'].image
+            dressMaterial.node_tree.nodes[f'{dressname}_Lightmap_UV1'].image = bpy.data.materials[f'miHoYo - Genshin {dressname}'].node_tree.nodes[f'{dressname}_Lightmap_UV1'].image
+            dressMaterial.node_tree.nodes[f'{dressname}_Diffuse_UV0'].image = bpy.data.materials[f'miHoYo - Genshin {dressname}'].node_tree.nodes[f'{dressname}_Diffuse_UV0'].image
+            dressMaterial.node_tree.nodes[f'{dressname}_Diffuse_UV1'].image = bpy.data.materials[f'miHoYo - Genshin {dressname}'].node_tree.nodes[f'{dressname}_Diffuse_UV1'].image
+            dressMaterial.node_tree.nodes[f'{dressname}_Normalmap_UV0'].image = bpy.data.materials[f'miHoYo - Genshin {dressname}'].node_tree.nodes[f'{dressname}_Normalmap_UV0'].image
+            dressMaterial.node_tree.nodes[f'{dressname}_Normalmap_UV1'].image = bpy.data.materials[f'miHoYo - Genshin {dressname}'].node_tree.nodes[f'{dressname}_Normalmap_UV1'].image
 
 
 classes = [GI_PT_Layout, GI_PT_Menu, GI_OT_Assing_Mat, GI_OT_GenshinImportTextures]
