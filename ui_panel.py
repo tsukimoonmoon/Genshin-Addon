@@ -218,7 +218,7 @@ class GI_OT_GenshinImportTextures(Operator, ImportHelper):
                 elif "Body_Shadow_Ramp" in file:
                     bpy.data.node_groups['Body Shadow Ramp'].nodes['Body_Shadow_Ramp'].image = img
                 elif "Body_Specular_Ramp" in file:
-                    img.colorspace_settings.name='Non-Color'
+                    img.colorspace_settings.name = 'Non-Color'
                     bpy.data.node_groups['Body Specular Ramp'].nodes['Body_Specular_Ramp'].image = img
                 elif "Face_Diffuse" in file:
                     bpy.context.view_layer.objects.active = body_var
@@ -250,14 +250,20 @@ def fixDressTexture():
     for mat in bpy.data.materials:
         matName = mat.name.split('_')[-1]
         if (f'_{matName}' in mat.name) and ('Dress' in mat.name):
-            dressname=findDressMaterialName(matName)
+            dressname = findDressMaterialName(matName)
             dressMaterial = bpy.data.materials["miHoYo - Genshin " + matName]
-            dressMaterial.node_tree.nodes[f'{dressname}_Lightmap_UV0'].image = bpy.data.materials[f'miHoYo - Genshin {dressname}'].node_tree.nodes[f'{dressname}_Lightmap_UV0'].image
-            dressMaterial.node_tree.nodes[f'{dressname}_Lightmap_UV1'].image = bpy.data.materials[f'miHoYo - Genshin {dressname}'].node_tree.nodes[f'{dressname}_Lightmap_UV1'].image
-            dressMaterial.node_tree.nodes[f'{dressname}_Diffuse_UV0'].image = bpy.data.materials[f'miHoYo - Genshin {dressname}'].node_tree.nodes[f'{dressname}_Diffuse_UV0'].image
-            dressMaterial.node_tree.nodes[f'{dressname}_Diffuse_UV1'].image = bpy.data.materials[f'miHoYo - Genshin {dressname}'].node_tree.nodes[f'{dressname}_Diffuse_UV1'].image
-            dressMaterial.node_tree.nodes[f'{dressname}_Normalmap_UV0'].image = bpy.data.materials[f'miHoYo - Genshin {dressname}'].node_tree.nodes[f'{dressname}_Normalmap_UV0'].image
-            dressMaterial.node_tree.nodes[f'{dressname}_Normalmap_UV1'].image = bpy.data.materials[f'miHoYo - Genshin {dressname}'].node_tree.nodes[f'{dressname}_Normalmap_UV1'].image
+            dressMaterial.node_tree.nodes[f'{dressname}_Lightmap_UV0'].image = \
+                bpy.data.materials[f'miHoYo - Genshin {dressname}'].node_tree.nodes[f'{dressname}_Lightmap_UV0'].image
+            dressMaterial.node_tree.nodes[f'{dressname}_Lightmap_UV1'].image = \
+                bpy.data.materials[f'miHoYo - Genshin {dressname}'].node_tree.nodes[f'{dressname}_Lightmap_UV1'].image
+            dressMaterial.node_tree.nodes[f'{dressname}_Diffuse_UV0'].image = \
+                bpy.data.materials[f'miHoYo - Genshin {dressname}'].node_tree.nodes[f'{dressname}_Diffuse_UV0'].image
+            dressMaterial.node_tree.nodes[f'{dressname}_Diffuse_UV1'].image = \
+                bpy.data.materials[f'miHoYo - Genshin {dressname}'].node_tree.nodes[f'{dressname}_Diffuse_UV1'].image
+            dressMaterial.node_tree.nodes[f'{dressname}_Normalmap_UV0'].image = \
+                bpy.data.materials[f'miHoYo - Genshin {dressname}'].node_tree.nodes[f'{dressname}_Normalmap_UV0'].image
+            dressMaterial.node_tree.nodes[f'{dressname}_Normalmap_UV1'].image = \
+                bpy.data.materials[f'miHoYo - Genshin {dressname}'].node_tree.nodes[f'{dressname}_Normalmap_UV1'].image
 
 
 classes = [GI_PT_Layout, GI_PT_Menu, GI_OT_Assing_Mat, GI_OT_GenshinImportTextures]
