@@ -46,7 +46,7 @@ def findDressMaterialName(matName):
             return x.replace('Tex_', "").split('_')[::-1][1]
 
 
-# #Contributed by Modder4869 - assing all materials
+# Contributed by Modder4869 - assing all materials
 class GI_OT_Assing_Mat(Operator):
     bl_label = "Assing Material"
     bl_idname = "assing.material"
@@ -192,7 +192,7 @@ class GI_OT_GenshinImportTextures(Operator, ImportHelper):
                     bpy.context.object.material_slots.get('miHoYo - Genshin Hair').material.node_tree.nodes[
                         'Hair_Normalmap_UV0'].image = img
                     bpy.context.object.material_slots.get('miHoYo - Genshin Hair').material.node_tree.nodes[
-                        'Hair_Normalmap_UV0'].image = img
+                        'Hair_Normalmap_UV1'].image = img
                 elif "Hair_Shadow_Ramp" in file:
                     bpy.data.node_groups['Hair Shadow Ramp'].nodes['Hair_Shadow_Ramp'].image = img
                 elif "Body_Diffuse" in file:
