@@ -2,7 +2,7 @@ import bpy
 from bpy.types import Operator, Panel
 from bpy_extras.io_utils import ImportHelper
 from bpy.utils import register_class, unregister_class
-from bpy.props import StringProperty, BoolProperty, EnumProperty
+from bpy.props import StringProperty, BoolProperty, EnumProperty, IntProperty
 import os
 
 
@@ -31,10 +31,10 @@ class GI_PT_Menu(Panel):
         box = layout.box()
         box1 = layout.box()
         box.label(text="Tools", icon="TOOL_SETTINGS")
-        box.operator("assing.material", text="Assing Materials", icon="MATERIAL_DATA").action = "assing_mat"
+        box.operator("file.genshin_import_materials", text="Append Materials", icon="MATERIAL_DATA").action = "append_mat"
+        box.operator("assing.material", text="Assing Materials", icon="NODE_MATERIAL").action = "assing_mat"
         box.operator("file.genshin_import", text="Import Textures (Linear)",
                      icon="FILEBROWSER").action = "Import_TexLinear"
-        # append materials coming soon :(
         box1.label(text="Json Data", icon="CONSOLE")
 
 
@@ -91,7 +91,7 @@ class GI_OT_Assing_Mat(Operator):
                                 materialSlot.material = bpy.data.materials["miHoYo - Genshin " + matName]
                     pass
             except Exception as e:
-                self.report({'ERROR'}, "Make sure to append file first")
+                self.report({'WARNING'}, "Make sure to append file first")
                 raise
             # select all empty objects
             bpy.ops.object.select_by_type(type="EMPTY")
@@ -128,6 +128,7 @@ class GI_OT_Assing_Mat(Operator):
                                      constraint_axis=(True, False, False), mirror=False, use_proportional_edit=False,
                                      proportional_edit_falloff='SMOOTH', proportional_size=1,
                                      use_proportional_connected=False, use_proportional_projected=False)
+            self.report({'INFO'}, "Assigned materials")
         return {'FINISHED'}
 
 
@@ -238,11 +239,69 @@ class GI_OT_GenshinImportTextures(Operator, ImportHelper):
                 else:
                     pass
                 fixDressTexture()
+            self.report({'INFO'}, "Imported and assigned textures")
             return {'FINISHED'}
 
         def execute(self, context):
             if self.action == 'Import_TexLinear':
                 execute()
+            return {'FINISHED'}
+
+
+# Structure for file comes from a script initially written by Zekium from Discord
+# Written by Mken from Discord - edited by me
+class GI_OT_GenshinImportMaterials(Operator, ImportHelper):
+    """Select Festivity's Shaders folder to import materials"""
+    bl_idname = "file.genshin_import_materials"  # important since its how we chain file dialogs
+    bl_label = "1_Genshin: Select Festivity Folder"
+    action: EnumProperty(
+        items=[
+            ('append_mat', '', '')
+        ]
+    )
+
+    # ImportHelper mixin class uses this
+    filename_ext = "*.*"
+
+    import_path: StringProperty(
+        name="Path",
+        description="Path to the folder of Festivity's Shaders project",
+        default="",
+        subtype='DIR_PATH'
+    )
+
+    filter_glob: StringProperty(
+        default="*.*",
+        options={'HIDDEN'},
+        maxlen=255,  # Max internal buffer length, longer would be clamped.
+    )
+
+    next_step_idx: IntProperty()
+    file_directory: StringProperty()
+
+    def execute(self, context):
+        if self.action == 'append_mat':
+            BLEND_FILE_WITH_GENSHIN_MATERIALS = 'miHoYo - Genshin Impact.blend'
+            MATERIAL_PATH_INSIDE_BLEND_FILE = 'Material'
+            project_root_directory_file_path = self.file_directory if self.file_directory else os.path.dirname(self.filepath)
+
+            DIRECTORY_WITH_BLEND_FILE_PATH = os.path.join(
+                project_root_directory_file_path,
+                BLEND_FILE_WITH_GENSHIN_MATERIALS,
+                MATERIAL_PATH_INSIDE_BLEND_FILE
+            )
+            NAMES_OF_GENSHIN_MATERIALS = [
+                {'name': 'miHoYo - Genshin Body'},
+                {'name': 'miHoYo - Genshin Face'},
+                {'name': 'miHoYo - Genshin Hair'},
+                {'name': 'miHoYo - Genshin Outlines'}
+            ]
+
+            bpy.ops.wm.append(
+                directory=DIRECTORY_WITH_BLEND_FILE_PATH,
+                files=NAMES_OF_GENSHIN_MATERIALS
+            )
+            self.report({'INFO'}, "Imported Materials")
             return {'FINISHED'}
 
 
@@ -266,7 +325,7 @@ def fixDressTexture():
                 bpy.data.materials[f'miHoYo - Genshin {dressname}'].node_tree.nodes[f'{dressname}_Normalmap_UV1'].image
 
 
-classes = [GI_PT_Layout, GI_PT_Menu, GI_OT_Assing_Mat, GI_OT_GenshinImportTextures]
+classes = [GI_PT_Layout, GI_PT_Menu, GI_OT_Assing_Mat, GI_OT_GenshinImportTextures, GI_OT_GenshinImportMaterials]
 
 
 def register():
